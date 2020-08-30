@@ -1,0 +1,5 @@
+[package]
+name = "luagraph"
+author = "lucy.sh"
+content_root = "luagraph"
+version = "0.0.1"
