@@ -15,6 +15,7 @@ LuaGraph is intended as a foundation that you can build more complex behaviour o
 We currently only support Undirected Graphs (via luagraph.UndirectedGraph), in the future it would be nice to add:
 1. Directed graphs
 2. Directed acyclic graphs (DAGs)
+3. Trees
 
 There is no formal documentation as of yet, but the [UndirectedGraph](https://github.com/intUnderflow/luagraph/blob/main/luagraph/UndirectedGraph/init.lua) source code has comments on each public method.
 
