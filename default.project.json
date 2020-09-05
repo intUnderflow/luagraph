@@ -1,0 +1,32 @@
+{
+    "name": "luagraph",
+    "tree": {
+      "$className": "DataModel",
+  
+      "HttpService": {
+        "$className": "HttpService",
+        "$properties": {
+          "HttpEnabled": {
+            "Type": "Bool",
+            "Value": true
+          }
+        }
+      },
+  
+  
+      "ServerScriptService": {
+        "$className": "ServerScriptService",
+  
+        "luagraph": {
+          "$path": "luagraph"
+        },
+
+        "tests": {
+          "$path": "tests"
+        }
+        
+      }
+      
+    }
+  }
+  
