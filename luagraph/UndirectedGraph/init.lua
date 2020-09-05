@@ -13,7 +13,7 @@ local function findEdgeInNode(node, nodeToFindConnectionTo)
 end
 
 local function copyTable(tableToCopy)
-    -- This runs C-side
+    -- This runs C-side so im hoping its faster than anything recursive we could do in pure Lua
     return HttpService:JSONDecode(HttpService:JSONEncode(tableToCopy))
 end
 
@@ -24,8 +24,8 @@ UndirectedGraph.__index = UndirectedGraph
 function UndirectedGraph.new()
     local self = setmetatable({}, UndirectedGraph)
     -- All node values are stored as [node id] = value
-    -- We allocate each node a number from 0 upwards using a counter.
-    self.counter = 0
+    -- We allocate each node a number from 1 upwards using a counter.
+    self.counter = 1
     self.nodes = {}
 
     return self
@@ -114,12 +114,20 @@ function UndirectedGraph:removeNode(nodeID)
 end
 
 -- Returns true if two nodes on the graph are connected by an edge and false otherwise.
+-- nodeIDFrom: The ID of one of the nodes
+-- nodeIDTo: The ID of the other node
 function UndirectedGraph:hasEdge(nodeIDFrom, nodeIDTo)
+    assert(self:hasNode(nodeIDFrom), "The from node does not exist.")
+    assert(self:hasNode(nodeIDTo), "The to node does not exist.")
+    assert(nodeIDFrom ~= nodeIDTo, "The from node and to node are the same node.")
     return self:_getEdge(nodeIDFrom, nodeIDTo) ~= nil
 end
 
 -- Adds an edge between two nodes to the graph with the given edgeValue.
 -- Errors if the nodes already have an edge.
+-- nodeIDFrom: The ID of one of the nodes
+-- nodeIDTo: The ID of the other node
+-- edgeValue: The value to assign to the created edge
 function UndirectedGraph:addEdge(nodeIDFrom, nodeIDTo, edgeValue)
     assert(not self:hasEdge(nodeIDFrom, nodeIDTo), "The nodes already have an edge")
     table.insert(self:_getNode(nodeIDFrom).edges, {to = nodeIDTo, value = edgeValue})
@@ -128,6 +136,8 @@ end
 
 -- Removes the edge between two nodes on the graph.
 -- Errors if the nodes do not have an edge.
+-- nodeIDFrom: The ID of one of the nodes
+-- nodeIDTo: The ID of the other node
 function UndirectedGraph:removeEdge(nodeIDFrom, nodeIDTo)
     assert(self:hasEdge(nodeIDFrom, nodeIDTo), "The nodes do not have an edge to remove")
     
@@ -138,8 +148,20 @@ function UndirectedGraph:removeEdge(nodeIDFrom, nodeIDTo)
     table.remove(self:_getNode(nodeIDTo).edges, indexOfEdgeOnNodeTo)
 end
 
+-- Returns the value of an edge between two nodes
+-- nodeIDFrom: The ID of one of the nodes
+-- nodeIDTo: The ID of the other node
+function UndirectedGraph:getEdgeValue(nodeIDFrom, nodeIDTo)
+    assert(self:hasEdge(nodeIDFrom, nodeIDTo), "The nodes do not have an edge.")
+    local _, edge = self:_getEdge(nodeIDFrom, nodeIDTo)
+    return edge.value
+end
+
 -- Edits an edge between two nodes to change the edgeValue.
 -- Errors if the edge between the two nodes does not exist.
+-- nodeIDFrom: The ID of one of the nodes
+-- nodeIDTo: The ID of the other node
+-- newEdgeValue: The new value to assign to the edge between the nodes
 function UndirectedGraph:editEdge(nodeIDFrom, nodeIDTo, newEdgeValue)
     assert(self:hasEdge(nodeIDFrom, nodeIDTo), "The nodes do not have an edge to edit")
 
@@ -152,11 +174,14 @@ end
 
 -- Either adds an edge between two nodes with a given value or edits an existing edge between the two nodes
 -- to hold a specific value.
-function UndirectedGraph:addOrEditEdge(nodeIDFrom, nodeIDFrom, edgeValue)
-    if self:hasEdge(nodeIDFrom, nodeID) then
-        self:editEdge(nodeIDFrom, nodeIDFrom, edgeValue)
+-- nodeIDFrom: The ID of one of the nodes
+-- nodeIDTo: The ID of the other node
+-- edgeValue: The value to assign to the edge
+function UndirectedGraph:addOrEditEdge(nodeIDFrom, nodeIDTo, edgeValue)
+    if self:hasEdge(nodeIDFrom, nodeIDTo) then
+        self:editEdge(nodeIDFrom, nodeIDTo, edgeValue)
     else
-        self:addEdge(nodeIDFrom, nodeID, edgeValue)
+        self:addEdge(nodeIDFrom, nodeIDTo, edgeValue)
     end
 end
 
