@@ -123,26 +123,26 @@ return function()
 
         -- :getNodeEdges tested in
 
-        describe(":editNodeValue", function()
+        describe(":setNodeValue", function()
 
             it("should error if the node does not exist", function()
                 local graph = UndirectedGraph.new()
                 expect(function()
-                    graph:editNodeValue(1, 2)
+                    graph:setNodeValue(1, 2)
                 end).to.throw()
             end)
             
             it("should mutate the value of a node", function()
                 local graph = UndirectedGraph.new()
                 local nodeId = graph:addNode(1)
-                graph:editNodeValue(nodeId, 2)
+                graph:setNodeValue(nodeId, 2)
                 expect(graph:getNodeValue(nodeId)).to.equal(2)
             end)
 
             it("should allow setting the node value to nil", function()
                 local graph = UndirectedGraph.new()
                 local nodeId = graph:addNode(1)
-                graph:editNodeValue(nodeId, nil)
+                graph:setNodeValue(nodeId, nil)
                 expect(graph:getNodeValue(nodeId)).to.equal(nil)
             end)
 
