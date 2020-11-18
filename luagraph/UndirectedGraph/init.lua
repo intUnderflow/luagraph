@@ -1,5 +1,6 @@
 -- A representation of an Undirected graph.
 local SERIALIZATION_VERSION = 1
+local SERIALIZATION_TYPE = "lucy.sh/luagraph/UndirectedGraph"
 
 local HttpService = game:GetService("HttpService")
 
@@ -40,7 +41,7 @@ end
 
 function UndirectedGraph.deserialize(serialized)
     local serializedStructure = HttpService:JSONDecode(serialized)
-    if serializedStructure.type ~= "lucy.sh/luagraph/UndirectedGraph" then
+    if serializedStructure.type ~= SERIALIZATION_TYPE then
         return error("This is not a serialized UndirectedGraph")
     end
     if serializedStructure.version == 1 then
@@ -97,7 +98,7 @@ end
 -- Edits a node in the graph to change its current value.
 -- nodeID: The ID of the node returned from :addNode
 -- newValue: The new value for the node.
-function UndirectedGraph:editNodeValue(nodeID, newValue)
+function UndirectedGraph:setNodeValue(nodeID, newValue)
     assert(self:hasNode(nodeID), "The node does not exist.")
     self:_getNode(nodeID).value = newValue
 end
@@ -192,7 +193,7 @@ function UndirectedGraph:serialize()
     -- structural information such as keys.
     local serializedStructure = {
         version = SERIALIZATION_VERSION,
-        type = "lucy.sh/luagraph/UndirectedGraph",
+        type = SERIALIZATION_TYPE,
         value = {
             nodes = self.nodes,
             counter = self.counter
